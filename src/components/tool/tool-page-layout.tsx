@@ -13,6 +13,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { authClient } from "@/lib/auth/client";
@@ -22,15 +23,35 @@ import { useNotificationDeduplication } from "@/hooks/use-notification-deduplica
 import { videoTaskStorage } from "@/lib/video-task-storage";
 import { videoHistoryStorage, type VideoHistoryItem } from "@/lib/video-history-storage";
 import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
-import { UpgradeModal } from "@/components/upgrade/upgrade-modal";
 import { siteConfig } from "@/config/site";
 import type { Video } from "@/db";
 import type { ToolPageConfig } from "@/config/tool-pages";
 import { GeneratorPanel, type GeneratorData } from "@/components/tool/generator-panel";
 import { uploadImage } from "@/lib/video-api";
-import { ToolLandingPage } from "@/components/tool/tool-landing-page";
-import { VideoHistoryPanel } from "@/components/tool/video-history-panel";
 import { toast } from "sonner";
+
+const ToolLandingPage = dynamic(
+  () => import("@/components/tool/tool-landing-page").then((mod) => mod.ToolLandingPage),
+  {
+    loading: () => <div className="min-h-[360px]" />,
+    ssr: false,
+  }
+);
+
+const VideoHistoryPanel = dynamic(
+  () => import("@/components/tool/video-history-panel").then((mod) => mod.VideoHistoryPanel),
+  {
+    loading: () => (
+      <div className="h-full min-h-[360px] rounded-2xl border border-border bg-muted/30" />
+    ),
+    ssr: false,
+  }
+);
+
+const UpgradeModal = dynamic(
+  () => import("@/components/upgrade/upgrade-modal").then((mod) => mod.UpgradeModal),
+  { ssr: false }
+);
 
 const TOOL_PREFILL_KEY = "videofly_tool_prefill";
 
@@ -93,8 +114,10 @@ export function ToolPageLayout({
   const tNotify = useTranslations("Notifications");
   const tTool = useTranslations("ToolPage");
 
+  const { data: session, isPending: isSessionPending } = authClient.useSession();
+  const user = session?.user ?? null;
+
   // 状态
-  const [user, setUser] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentVideos, setCurrentVideos] = useState<Video[]>([]);
   const [generatingIds, setGeneratingIds] = useState<string[]>([]);
@@ -246,13 +269,6 @@ export function ToolPageLayout({
     onCompleted: handleCompleted,
     onFailed: handleFailed,
   });
-
-  // 检查登录状态
-  useEffect(() => {
-    authClient.getSession().then((session) => {
-      setUser(session?.data?.user ?? null);
-    });
-  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -579,6 +595,19 @@ export function ToolPageLayout({
 
   // 移动端：显示标签导航
   const showMobileTabs = true;
+
+  if (isSessionPending) {
+    return (
+      <div className="flex flex-1 flex-col h-full overflow-hidden p-4 lg:p-4 gap-6 bg-background">
+        <div className="grid min-h-0 h-fit max-h-[calc(100svh-120px)] grid-cols-1 lg:grid-cols-[380px_minmax(0,1.2fr)] gap-5">
+          <div className="h-full min-h-[520px] rounded-2xl bg-card/70 p-3">
+            <div className="h-full rounded-xl bg-muted/30 animate-pulse" />
+          </div>
+          <div className="hidden lg:block h-full min-h-[520px] rounded-2xl border border-border bg-muted/30 animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   // Unauthenticated Layout: Scrollable, Tool Area + Landing Page
   if (!user) {

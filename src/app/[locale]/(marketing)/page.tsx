@@ -1,10 +1,9 @@
 import { HeroSection } from "@/components/landing/hero-section";
-import { FeaturesSection } from "@/components/landing/features-section";
-// import { ShowcaseSection } from "@/components/landing/showcase-section";
-import { HowItWorks } from "@/components/landing/how-it-works-section";
+import {
+  DeferredClosingSections,
+  DeferredIntroSections,
+} from "@/components/landing/deferred-home-sections";
 import { PricingSection } from "@/components/landing/pricing-section";
-import { FAQSection } from "@/components/landing/faq-section";
-import { CTASection } from "@/components/landing/cta-section";
 
 import type { Locale } from "@/config/i18n-config";
 import { siteConfig } from "@/config/site";
@@ -70,12 +69,9 @@ export default async function HomePage({ params }: HomePageProps) {
   return (
     <>
       <HeroSection currentProvider={getConfiguredAIProvider()} />
-      {/* <ShowcaseSection /> */}
-      <FeaturesSection />
-      <HowItWorks />
+      <DeferredIntroSections />
       <PricingSection />
-      <CTASection />
-      <FAQSection />
+      <DeferredClosingSections />
     </>
   );
 }

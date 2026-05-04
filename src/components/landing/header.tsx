@@ -44,6 +44,7 @@ import { LocaleLink } from "@/i18n/navigation";
 import type { User } from "@/lib/auth/client";
 import { useSigninModal } from "@/hooks/use-signin-modal";
 import { authClient } from "@/lib/auth/client";
+import { useIdleRoutePrefetch } from "@/hooks/use-idle-route-prefetch";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   ImagePlay,
@@ -60,6 +61,13 @@ export function LandingHeader({ user }: { user?: User | null }) {
   const [isPending, startTransition] = useTransition();
   const [scrolled, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
+  useIdleRoutePrefetch([
+    `/${locale}`,
+    `/${locale}/pricing`,
+    `/${locale}/text-to-video`,
+    `/${locale}/image-to-video`,
+    `/${locale}/reference-to-video`,
+  ]);
 
   const handleSignOut = async () => {
     await authClient.signOut();

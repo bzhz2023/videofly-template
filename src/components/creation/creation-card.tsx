@@ -5,31 +5,23 @@
 // ============================================
 
 import { useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Play, Clock, AlertCircle, MoreHorizontal, Download, Trash2 } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { toast } from "sonner";
+import { Play, Clock, AlertCircle, MoreHorizontal } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/components/ui";
-import { formatDistanceToNow } from "date-fns";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { formatRelativeTime } from "@/lib/format-relative-time";
 import type { Video } from "@/lib/types/dashboard";
+
+const CreationCardActions = dynamic(
+  () =>
+    import("@/components/creation/creation-card-actions").then(
+      (mod) => mod.CreationCardActions
+    ),
+  { ssr: false }
+);
 
 interface CreationCardProps {
   video: Video;
@@ -78,7 +70,9 @@ export function CreationCard({
   isDeleting,
 }: CreationCardProps) {
   const t = useTranslations("dashboard.myCreations");
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const locale = useLocale();
+  const [isMenuLoaded, setIsMenuLoaded] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const normalizedStatus = (video.status || "pending").toLowerCase() as keyof typeof statusConfig;
@@ -94,20 +88,7 @@ export function CreationCard({
   const isCompleted = normalizedStatus === "completed";
 
   const handleDelete = async () => {
-    setShowDeleteDialog(false);
     await onDelete?.(video.uuid);
-  };
-
-  const handleDownload = () => {
-    if (video.videoUrl) {
-      const link = document.createElement("a");
-      link.href = video.videoUrl;
-      link.download = `videofly-${video.uuid}.mp4`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success(t("actions.downloadSuccess"));
-    }
   };
 
   const handlePreviewStart = () => {
@@ -200,8 +181,23 @@ export function CreationCard({
 
           {/* Action menu */}
           <div className="absolute top-2 right-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+            {isMenuLoaded ? (
+              <CreationCardActions
+                isCompleted={isCompleted}
+                onDelete={handleDelete}
+                open={isMenuOpen}
+                onOpenChange={setIsMenuOpen}
+                videoUrl={video.videoUrl}
+                videoUuid={video.uuid}
+              />
+            ) : (
+              <span
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIsMenuLoaded(true);
+                  setIsMenuOpen(true);
+                }}
+              >
                 <Button
                   variant="secondary"
                   size="icon"
@@ -209,23 +205,8 @@ export function CreationCard({
                 >
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {isCompleted && (
-                  <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDownload(); }}>
-                    <Download className="h-4 w-4 mr-2" />
-                    {t("actions.download")}
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true); }}
-                  className="text-destructive"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  {t("actions.delete")}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </span>
+            )}
           </div>
         </div>
 
@@ -244,33 +225,13 @@ export function CreationCard({
 
           {/* Date */}
           <div className="text-xs text-muted-foreground">
-            {formatDistanceToNow(new Date(video.createdAt), { addSuffix: true })}
+            {formatRelativeTime(video.createdAt, locale)}
           </div>
 
           {/* Error is displayed in the preview area for failed videos */}
         </div>
       </div>
 
-      {/* Delete confirmation dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteConfirm.title")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("deleteConfirm.message")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("deleteConfirm.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t("deleteConfirm.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

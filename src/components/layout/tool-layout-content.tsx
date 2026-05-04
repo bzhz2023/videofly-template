@@ -3,6 +3,7 @@
 import { useMobileMenu } from "@/components/layout/mobile-menu-context";
 import { HeaderSimple } from "@/components/layout/header-simple";
 import { Sidebar } from "@/components/layout/sidebar";
+import { useIdleRoutePrefetch } from "@/hooks/use-idle-route-prefetch";
 
 interface ToolLayoutContentProps {
   children: React.ReactNode;
@@ -16,6 +17,15 @@ export function ToolLayoutContent({
   user,
 }: ToolLayoutContentProps) {
   const { mobileMenuOpen, setMobileMenuOpen } = useMobileMenu();
+  useIdleRoutePrefetch([
+    `/${lang}`,
+    `/${lang}/text-to-video`,
+    `/${lang}/image-to-video`,
+    `/${lang}/reference-to-video`,
+    `/${lang}/my-creations`,
+    `/${lang}/credits`,
+    `/${lang}/settings`,
+  ]);
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,5 +1,5 @@
 import { getToolPageConfig, getToolPageConfigForProvider } from "@/config/tool-pages";
-import { ToolPageLayout } from "@/components/tool/tool-page-layout";
+import { ToolPageLoader } from "@/components/tool/tool-page-loader";
 import type { Locale } from "@/config/i18n-config";
 import { buildAlternates, resolveOgImage } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
@@ -51,7 +51,7 @@ export default async function ReferenceToVideoPage({ params }: ReferenceToVideoP
   );
   const { locale } = await params;
   return (
-    <ToolPageLayout
+    <ToolPageLoader
       config={config}
       locale={locale}
       toolRoute="reference-to-video"
