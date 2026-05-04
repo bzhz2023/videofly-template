@@ -54,6 +54,13 @@ const UpgradeModal = dynamic(
 );
 
 const TOOL_PREFILL_KEY = "videofly_tool_prefill";
+const HISTORY_SYNC_CACHE_MS = 60 * 1000;
+
+const historySyncState = {
+  userId: null as string | null,
+  lastSyncedAt: 0,
+  inFlight: false,
+};
 
 // ============================================================================
 // Types
@@ -298,18 +305,50 @@ export function ToolPageLayout({
     const history = videoHistoryStorage.getHistory(user.id);
     setHistoryItems(history);
 
-    // 可选：从服务器同步最近 20 条视频
-    fetch(`/api/v1/video/list?limit=20`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.data?.videos) {
-          videoHistoryStorage.syncFromServer(data.data.videos);
-          setHistoryItems(videoHistoryStorage.getHistory(user.id));
-        }
-      })
-      .catch((error) => {
-        console.warn("Failed to sync video history from server:", error);
-      });
+    const now = Date.now();
+    const recentlySynced =
+      historySyncState.userId === user.id &&
+      now - historySyncState.lastSyncedAt < HISTORY_SYNC_CACHE_MS;
+
+    if (recentlySynced || historySyncState.inFlight) {
+      return;
+    }
+
+    // 可选：从服务器同步最近 20 条视频。延后到空闲时，避免工具页切换被远端数据库冷启动拖慢。
+    const syncServerHistory = () => {
+      historySyncState.inFlight = true;
+      historySyncState.userId = user.id;
+      const startedAt = performance.now();
+
+      fetch(`/api/v1/video/list?limit=20`)
+        .then((res) => res.json())
+        .then((data) => {
+          const elapsedMs = Math.round(performance.now() - startedAt);
+          if (elapsedMs > 1000) {
+            console.info(`[perf] tool history sync took ${elapsedMs}ms`);
+          }
+
+          if (data.data?.videos) {
+            videoHistoryStorage.syncFromServer(data.data.videos);
+            setHistoryItems(videoHistoryStorage.getHistory(user.id));
+          }
+        })
+        .catch((error) => {
+          console.warn("Failed to sync video history from server:", error);
+        })
+        .finally(() => {
+          historySyncState.inFlight = false;
+          historySyncState.lastSyncedAt = Date.now();
+        });
+    };
+
+    if ("requestIdleCallback" in window) {
+      const idleId = window.requestIdleCallback(syncServerHistory, { timeout: 2000 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+
+    const timeoutId = setTimeout(syncServerHistory, 800);
+    return () => clearTimeout(timeoutId);
   }, [user?.id]);
 
   useEffect(() => {

@@ -3,44 +3,97 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-interface UseIdleRoutePrefetchOptions {
+interface IdleRoutePrefetchOptions {
   enabled?: boolean;
-  delayMs?: number;
+  initialDelayMs?: number;
+  staggerMs?: number;
 }
 
-const prefetchedRoutes = new Set<string>();
+const warmedDevRoutes = new Set<string>();
+let devRoutePrewarmQueue = Promise.resolve();
+
+function prewarmDevRoute(href: string) {
+  if (warmedDevRoutes.has(href)) return;
+  warmedDevRoutes.add(href);
+
+  devRoutePrewarmQueue = devRoutePrewarmQueue
+    .catch(() => undefined)
+    .then(async () => {
+      await fetch(href, {
+        credentials: "same-origin",
+        headers: {
+          "x-videofly-route-prewarm": "1",
+        },
+        priority: "low",
+      } as RequestInit & { priority?: "low" | "high" | "auto" });
+    })
+    .catch((error) => {
+      warmedDevRoutes.delete(href);
+      console.warn(`[perf] route prewarm failed for ${href}`, error);
+    });
+}
 
 export function useIdleRoutePrefetch(
-  routes: string[],
-  options: UseIdleRoutePrefetchOptions = {}
+  hrefs: string[],
+  {
+    enabled = true,
+    initialDelayMs = 300,
+    staggerMs = 350,
+  }: IdleRoutePrefetchOptions = {}
 ) {
   const router = useRouter();
-  const { enabled = true, delayMs = 1200 } = options;
 
   useEffect(() => {
-    if (!enabled || routes.length === 0) return;
-    if (typeof window === "undefined") return;
+    if (!enabled || hrefs.length === 0) return;
 
-    const uniqueRoutes = routes.filter((route) => {
-      if (prefetchedRoutes.has(route)) return false;
-      prefetchedRoutes.add(route);
-      return true;
-    });
+    const uniqueHrefs = Array.from(new Set(hrefs));
+    const timeoutIds: number[] = [];
+    const idleIds: number[] = [];
+    let cancelled = false;
 
-    if (uniqueRoutes.length === 0) return;
+    const prefetchRoute = (href: string) => {
+      if (cancelled) return;
 
-    const prefetch = () => {
-      for (const route of uniqueRoutes) {
-        router.prefetch(route);
+      try {
+        if (process.env.NODE_ENV === "development") {
+          prewarmDevRoute(href);
+          return;
+        }
+
+        router.prefetch(href);
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn(`[perf] route prefetch failed for ${href}`, error);
+        }
       }
     };
 
-    if ("requestIdleCallback" in window) {
-      const id = window.requestIdleCallback(prefetch, { timeout: delayMs + 2000 });
-      return () => window.cancelIdleCallback(id);
-    }
+    const schedulePrefetches = () => {
+      uniqueHrefs.forEach((href, index) => {
+        const timeoutId = window.setTimeout(() => {
+          if ("requestIdleCallback" in window) {
+            const idleId = window.requestIdleCallback(
+              () => prefetchRoute(href),
+              { timeout: 1500 }
+            );
+            idleIds.push(idleId);
+            return;
+          }
 
-    const timer = globalThis.setTimeout(prefetch, delayMs);
-    return () => globalThis.clearTimeout(timer);
-  }, [delayMs, enabled, router, routes]);
+          prefetchRoute(href);
+        }, index * staggerMs);
+
+        timeoutIds.push(timeoutId);
+      });
+    };
+
+    const initialTimeoutId = window.setTimeout(schedulePrefetches, initialDelayMs);
+    timeoutIds.push(initialTimeoutId);
+
+    return () => {
+      cancelled = true;
+      timeoutIds.forEach((id) => window.clearTimeout(id));
+      idleIds.forEach((id) => window.cancelIdleCallback(id));
+    };
+  }, [enabled, hrefs, initialDelayMs, router, staggerMs]);
 }
