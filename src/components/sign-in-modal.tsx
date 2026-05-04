@@ -38,8 +38,8 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
     } catch (error) {
       console.error(`${provider} signIn error:`, error);
       setSignInClicked(null);
-      toast.error("Login failed", {
-        description: `Could not sign in with ${provider}. Please try again.`,
+      toast.error(t("login_failed"), {
+        description: t("social_failed", { provider }),
       });
     }
   };
@@ -49,7 +49,7 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !emailRegex.test(email)) {
-      setEmailError("Please enter a valid email address");
+      setEmailError(t("invalid_email"));
       return;
     }
 
@@ -62,16 +62,16 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
         callbackURL,
       });
 
-      toast.success("Check your email", {
-        description: "We sent you a login link. Be sure to check your spam too.",
+      toast.success(t("check_email"), {
+        description: t("magic_link_sent"),
       });
 
       setEmail("");
       signInModal.onClose();
     } catch (error) {
       console.error("Magic link signIn error:", error);
-      toast.error("Something went wrong", {
-        description: "Your sign in request failed. Please try again.",
+      toast.error(t("request_failed_title"), {
+        description: t("request_failed_description"),
       });
     } finally {
       setSignInClicked(null);
@@ -130,11 +130,11 @@ export const SignInModalContent = ({ lang }: SignInModalContentProps) => {
             <form onSubmit={handleMagicLinkLogin} className="grid gap-2">
               <div className="grid gap-1">
                 <Label className="sr-only" htmlFor="email">
-                  Email
+                  {t("email_label")}
                 </Label>
                 <Input
                   id="email"
-                  placeholder="name@example.com"
+                  placeholder={t("email_placeholder")}
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"

@@ -2,6 +2,7 @@ import { PricingSection } from "@/components/landing/pricing-section";
 import { DeferredFAQSection } from "@/components/landing/deferred-faq-section";
 import type { Locale } from "@/config/i18n-config";
 import { buildAlternates } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -10,9 +11,10 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const alternates = buildAlternates("/pricing", locale);
+  const t = await getTranslations("Metadata");
 
   return {
-    title: "Pricing",
+    title: t("pricingTitle"),
     alternates: {
       canonical: alternates.canonical,
       languages: alternates.languages,

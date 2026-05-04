@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/config/i18n-config";
 
-export const metadata = {
-    title: "Privacy Policy - VideoFly",
-    description: "Privacy Policy for VideoFly",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations("Metadata");
+
+    return {
+        title: t("privacyTitle"),
+        description: t("privacyDescription"),
+    };
+}
 
 export default async function PrivacyPage({
     params,

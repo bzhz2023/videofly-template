@@ -23,53 +23,41 @@ import { LocaleLink } from "@/i18n/navigation";
 const showcaseVideos = [
   {
     id: 1,
-    title: "Cinematic Nature",
-    description: "A stunning landscape video",
+    key: "nature",
     thumbnail: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
     gradient: "from-blue-500 to-cyan-500",
-    tag: "Text to Video",
   },
   {
     id: 2,
-    title: "Product Animation",
-    description: "Smooth product showcase",
+    key: "product",
     thumbnail: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80",
     gradient: "from-purple-500 to-pink-500",
-    tag: "Image to Video",
   },
   {
     id: 3,
-    title: "Abstract Art",
-    description: "Creative AI-generated visuals",
+    key: "abstract",
     thumbnail: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
     gradient: "from-orange-500 to-red-500",
-    tag: "AI Creative",
   },
   {
     id: 4,
-    title: "Urban Scene",
-    description: "City life in motion",
+    key: "urban",
     thumbnail: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=800&q=80",
     gradient: "from-green-500 to-emerald-500",
-    tag: "Text to Video",
   },
   {
     id: 5,
-    title: "Character Animation",
-    description: "Bringing characters to life",
+    key: "character",
     thumbnail: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&q=80",
     gradient: "from-indigo-500 to-purple-500",
-    tag: "Character",
   },
   {
     id: 6,
-    title: "Space Journey",
-    description: "Explore the cosmos",
+    key: "space",
     thumbnail: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=800&q=80",
     gradient: "from-teal-500 to-cyan-500",
-    tag: "Text to Video",
   },
-];
+] as const;
 
 export function ShowcaseSection() {
   const t = useTranslations("Showcase");
@@ -130,6 +118,12 @@ export function ShowcaseSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {showcaseVideos.map((video, index) => (
             <BlurFade key={video.id} delay={index * 0.05} inView>
+              {(() => {
+                const title = t(`items.${video.key}.title`);
+                const description = t(`items.${video.key}.description`);
+                const tag = t(`items.${video.key}.tag`);
+
+                return (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -155,7 +149,7 @@ export function ShowcaseSection() {
                   <div className="relative aspect-video overflow-hidden">
                     <motion.img
                       src={video.thumbnail}
-                      alt={`${video.title} - ${video.description}. AI-generated video example showing ${video.tag} capabilities.`}
+                      alt={t("alt", { title, description, tag })}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     />
 
@@ -189,19 +183,21 @@ export function ShowcaseSection() {
                       transition={{ delay: 0.3 }}
                       className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-white/20"
                     >
-                      <span className="text-xs font-medium text-white">{video.tag}</span>
+                      <span className="text-xs font-medium text-white">{tag}</span>
                     </motion.div>
                   </div>
 
                   {/* 视频信息 */}
                   <div className="p-4">
                     <h3 className="text-lg font-semibold mb-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:bg-clip-text group-hover:from-blue-600 group-hover:to-purple-600 transition-all">
-                      {video.title}
+                      {title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">{video.description}</p>
+                    <p className="text-sm text-muted-foreground">{description}</p>
                   </div>
                 </div>
               </motion.div>
+                );
+              })()}
             </BlurFade>
           ))}
         </div>

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -8,10 +9,14 @@ import { buttonVariants } from "@/components/ui/button";
 import { UserAuthForm } from "@/components/user-auth-form";
 import type { Locale } from "@/config/i18n-config";
 
-export const metadata = {
-  title: "Create an account",
-  description: "Create an account to get started.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+
+  return {
+    title: t("registerTitle"),
+    description: t("registerDescription"),
+  };
+}
 
 export default async function RegisterPage({
   params,

@@ -255,12 +255,12 @@ export function ToolPageLayout({
       }
       const notificationKey = `${videoId}:failed`;
       if (shouldNotify(notificationKey)) {
-        const message = error || "Video generation failed";
+        const message = error || tTool("generationFailed");
         toast.error(message);
         markNotified(notificationKey);
       }
     },
-    [removeGeneratingId, user?.id, invalidate, shouldNotify, markNotified]
+    [removeGeneratingId, user?.id, invalidate, shouldNotify, markNotified, tTool]
   );
 
   const { startPolling, stopPolling, isPolling } = useVideoPolling({
@@ -478,13 +478,13 @@ export function ToolPageLayout({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error?.error?.message || error?.message || "Failed to generate video");
+        throw new Error(error?.error?.message || error?.message || tTool("generationFailed"));
       }
 
       const result = await response.json();
       const videoUuid = result.data.videoUuid as string;
 
-      toast.success("Generation started");
+      toast.success(tTool("generationStarted"));
 
       // 添加到历史记录
       videoHistoryStorage.addHistory({
@@ -522,7 +522,7 @@ export function ToolPageLayout({
       const requiredCredits = data.estimatedCredits || 0;
       optimisticRelease(requiredCredits);
       // 显示错误提示
-      toast.error(error instanceof Error ? error.message : "Failed to generate video");
+      toast.error(error instanceof Error ? error.message : tTool("generationFailed"));
     }
     setIsSubmitting(false);
   }, [
@@ -537,6 +537,7 @@ export function ToolPageLayout({
     optimisticFreeze,
     optimisticRelease,
     tNotify,
+    tTool,
   ]);
 
   // 处理重新生成
@@ -551,7 +552,7 @@ export function ToolPageLayout({
         method: "DELETE",
       });
       if (!response.ok) {
-        throw new Error("Failed to delete video");
+        throw new Error(tTool("deleteFailed"));
       }
 
       // 从历史记录中删除
@@ -560,12 +561,12 @@ export function ToolPageLayout({
 
       // 更新 currentVideos（兼容旧逻辑）
       setCurrentVideos((prev) => prev.filter((v) => v.uuid !== uuid));
-      toast.success("Video deleted successfully");
+      toast.success(tTool("deleteSuccess"));
     } catch (error) {
       console.error("Delete error:", error);
-      toast.error("Failed to delete video");
+      toast.error(error instanceof Error ? error.message : tTool("deleteFailed"));
     }
-  }, [user?.id]);
+  }, [user?.id, tTool]);
 
   // 处理重试失败的视频
   const handleRetry = useCallback(async (uuid: string) => {
@@ -574,7 +575,7 @@ export function ToolPageLayout({
         method: "POST",
       });
       if (!response.ok) {
-        throw new Error("Failed to retry video");
+        throw new Error(tTool("retryFailed"));
       }
       await response.json();
       resetNotification(uuid);
@@ -586,12 +587,12 @@ export function ToolPageLayout({
           v.uuid === uuid ? { ...v, status: "GENERATING", errorMessage: null } : v
         )
       );
-      toast.success("Video retry started");
+      toast.success(tTool("retryStarted"));
     } catch (error) {
       console.error("Retry error:", error);
-      toast.error("Failed to retry video");
+      toast.error(error instanceof Error ? error.message : tTool("retryFailed"));
     }
-  }, [addGeneratingId, startPolling, resetNotification]);
+  }, [addGeneratingId, startPolling, resetNotification, tTool]);
 
   // 移动端：显示标签导航
   const showMobileTabs = true;
@@ -674,8 +675,8 @@ export function ToolPageLayout({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium mb-2">Detailed Preview</h3>
-                    <p className="text-sm max-w-xs">Login to generate and view your high-quality AI videos.</p>
+                    <h3 className="text-lg font-medium mb-2">{tTool("previewTitle")}</h3>
+                    <p className="text-sm max-w-xs">{tTool("previewSubtitle")}</p>
                   </div>
                 </div>
               </div>

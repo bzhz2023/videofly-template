@@ -89,15 +89,15 @@ export function AceternityPricing({
       });
 
       if (error) {
-        toast.error("Checkout error", {
-          description: error.message ?? "Failed to create checkout session.",
+        toast.error(dictPrice.checkout_error, {
+          description: error.message ?? dictPrice.checkout_failed,
         });
         return;
       }
 
       if (!data || !("url" in data) || !data.url) {
-        toast.error("Checkout error", {
-          description: "Missing checkout URL from Creem.",
+        toast.error(dictPrice.checkout_error, {
+          description: dictPrice.checkout_missing_url,
         });
         return;
       }
@@ -109,15 +109,15 @@ export function AceternityPricing({
   const handlePortal = async () => {
     const { data, error } = await creem.createPortal();
     if (error) {
-      toast.error("Portal error", {
-        description: error.message ?? "Failed to open customer portal.",
+      toast.error(dictPrice.portal_error, {
+        description: error.message ?? dictPrice.portal_failed,
       });
       return;
     }
 
     if (!data || !("url" in data) || !data.url) {
-      toast.error("Portal error", {
-        description: "Missing portal URL from Creem.",
+      toast.error(dictPrice.portal_error, {
+        description: dictPrice.portal_missing_url,
       });
       return;
     }
@@ -156,7 +156,7 @@ export function AceternityPricing({
           </h1>
           <p className="mx-auto mt-4 max-w-md text-center text-base text-muted-foreground">
             <Balancer>
-              选择适合您的积分方案，灵活满足不同需求
+              {dictPrice.description}
             </Balancer>
           </p>
         </motion.div>
@@ -168,20 +168,20 @@ export function AceternityPricing({
               active={activeTab === "onetime"}
               onClick={() => setActiveTab("onetime")}
             >
-              一次性积分包
+              {dictPrice.onetime_tab}
             </TabButton>
             <TabButton
               active={activeTab === "monthly"}
               onClick={() => setActiveTab("monthly")}
             >
-              按月订阅
+              {dictPrice.monthly_tab}
             </TabButton>
             <TabButton
               active={activeTab === "yearly"}
               onClick={() => setActiveTab("yearly")}
               showBadge
             >
-              按年订阅
+              {dictPrice.yearly_tab}
             </TabButton>
           </div>
         </div>
@@ -214,7 +214,7 @@ export function AceternityPricing({
             </div>
           ) : (
             <div className="py-12 text-center text-muted-foreground">
-              暂无可用产品
+              {dictPrice.no_products}
             </div>
           )}
         </div>
@@ -327,7 +327,7 @@ function PricingCard({
         {isRecommended && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
             <span className="rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground">
-              推荐
+              {dictPrice.recommended}
             </span>
           </div>
         )}
@@ -353,7 +353,7 @@ function PricingCard({
               </span>
               {product.billingPeriod && (
                 <span className="text-muted-foreground mb-1 text-sm">
-                  /{product.billingPeriod === "year" ? "年" : "月"}
+                  {product.billingPeriod === "year" ? dictPrice.per_year : dictPrice.per_month}
                 </span>
               )}
             </div>
@@ -382,7 +382,7 @@ function PricingCard({
                 {isPending ? (
                   <span className="flex items-center gap-2">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                    Loading...
+                    {dictPrice.processing}
                   </span>
                 ) : product.billingPeriod ? (
                   dictPrice.upgrade

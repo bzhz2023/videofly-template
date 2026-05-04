@@ -54,8 +54,8 @@ export function CreemSubscriptionCard({ dict }: CreemSubscriptionCardProps) {
     startTransition(async () => {
       const { data, error } = await creem.createPortal();
       if (error) {
-        toast.error("Portal error", {
-          description: error.message ?? "Failed to open customer portal.",
+        toast.error(dict.portal_error, {
+          description: error.message ?? dict.portal_failed,
         });
         return;
       }
@@ -65,8 +65,8 @@ export function CreemSubscriptionCard({ dict }: CreemSubscriptionCardProps) {
         return;
       }
 
-      toast.error("Portal error", {
-        description: "Missing portal URL from Creem.",
+      toast.error(dict.portal_error, {
+        description: dict.portal_missing_url,
       });
     });
   };
@@ -80,13 +80,13 @@ export function CreemSubscriptionCard({ dict }: CreemSubscriptionCardProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscription</CardTitle>
+        <CardTitle>{dict.subscription}</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="flex items-center text-sm text-muted-foreground">
             <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
-            Loading...
+            {dict.processing}
           </div>
         ) : (
           <p dangerouslySetInnerHTML={{ __html: content }} />

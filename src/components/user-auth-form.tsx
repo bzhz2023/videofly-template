@@ -53,13 +53,13 @@ export function UserAuthForm({
         callbackURL: searchParams?.get("from") ?? `/${lang}/my-creations`,
       });
 
-      toast.success("Check your email", {
-        description: "We sent you a login link. Be sure to check your spam too.",
+      toast.success(t("check_email"), {
+        description: t("magic_link_sent"),
       });
     } catch (error) {
       console.error("Error during sign in:", error);
-      toast.error("Something went wrong.", {
-        description: "Your sign in request failed. Please try again.",
+      toast.error(t("request_failed_title"), {
+        description: t("request_failed_description"),
       });
     } finally {
       setIsLoading(false);
@@ -72,11 +72,11 @@ export function UserAuthForm({
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
-              Email
+              {t("email_label")}
             </Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder={t("email_placeholder")}
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -134,7 +134,7 @@ export function UserAuthForm({
         ) : (
           <Icons.Google className="mr-2 h-4 w-4" />
         )}{" "}
-        Continue with Google
+        {t("continue_google")}
       </button>
     </div>
   );

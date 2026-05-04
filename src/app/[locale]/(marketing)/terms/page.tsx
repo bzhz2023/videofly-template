@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import type { Locale } from "@/config/i18n-config";
 
-export const metadata = {
-    title: "Terms of Service - VideoFly",
-    description: "Terms of Service for VideoFly",
-};
+export async function generateMetadata(): Promise<Metadata> {
+    const t = await getTranslations("Metadata");
+
+    return {
+        title: t("termsTitle"),
+        description: t("termsDescription"),
+    };
+}
 
 export default async function TermsPage({
     params,

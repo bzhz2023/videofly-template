@@ -15,10 +15,10 @@ export function LandingFooter() {
     {
       title: t('product'),
       links: [
-        { title: "Image to Video", href: "/image-to-video" },
-        { title: "Text to Video", href: "/text-to-video" },
-        { title: "Reference to Video", href: "/reference-to-video" },
-        { title: "Pricing", href: "/pricing" },
+        { title: t('imageToVideo'), href: "/image-to-video" },
+        { title: t('textToVideo'), href: "/text-to-video" },
+        { title: t('referenceToVideo'), href: "/reference-to-video" },
+        { title: t('pricing'), href: "/pricing" },
       ],
     },
     // {
@@ -55,7 +55,7 @@ export function LandingFooter() {
               🎬 VideoFly
             </LocaleLink>
             <p className="text-sm text-muted-foreground mb-4">
-              Transform your ideas into stunning videos with AI.
+              {t('description')}
             </p>
           </div>
 
@@ -87,9 +87,9 @@ export function LandingFooter() {
             {t('copyright', { year: currentYear })}
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with
+            {t('madeWith')}
             <Heart className="h-4 w-4 fill-pink-500 text-pink-500" />
-            by VideoFly Team
+            {t('madeBy')}
           </p>
         </div>
       </div>

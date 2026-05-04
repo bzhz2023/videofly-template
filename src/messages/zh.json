@@ -1,7 +1,16 @@
 {
   "Metadata": {
     "title": "VideoFly - AI 视频生成平台",
-    "description": "使用 Sora 2、Veo 3.1 等模型在几分钟内创建惊人的 AI 视频"
+    "description": "使用 Sora 2、Veo 3.1 等模型在几分钟内创建惊人的 AI 视频",
+    "pricingTitle": "定价",
+    "loginTitle": "登录",
+    "loginDescription": "登录您的账户",
+    "registerTitle": "创建账户",
+    "registerDescription": "创建账户，开始使用。",
+    "privacyTitle": "隐私政策",
+    "privacyDescription": "了解 VideoFly 如何收集、使用和保护您的数据。",
+    "termsTitle": "服务条款",
+    "termsDescription": "查看使用 VideoFly 的条款与条件。"
   },
   "Common": {
     "login": "登录",
@@ -79,7 +88,33 @@
     "generatingTag": "生成中",
     "generatingHint": "视频生成中，可继续发起新任务。",
     "modelLabel": "模型",
-    "download": "下载"
+    "download": "下载",
+    "generationStarted": "已开始生成",
+    "generationFailed": "视频生成失败",
+    "deleteSuccess": "视频已删除",
+    "deleteFailed": "删除视频失败",
+    "retryStarted": "已开始重新生成",
+    "retryFailed": "重新生成失败",
+    "previewTitle": "详细预览",
+    "previewSubtitle": "登录后即可生成并查看高清视频。",
+    "content": {
+      "title": "将图片转化为精彩视频",
+      "subtitle": "支持最新 AI 模型：Sora 2、Veo 3.1、Seedance 1.5 和 Wan 2.6",
+      "examples": {
+        "beach": "女孩在海滩上行走",
+        "city": "夜晚的未来城市",
+        "abstract": "流动的抽象色彩"
+      },
+      "featuresTitle": "功能",
+      "features": {
+        "models": "可选择多种 AI 模型",
+        "quality": "高质量 1080p 输出",
+        "speed": "快速生成（2-5 分钟）",
+        "ratios": "支持多种画面比例"
+      },
+      "cta": "立即注册，领取 {credits} 个免费积分试用！",
+      "login": "登录后开始"
+    }
   },
   "Showcase": {
     "badge": "亲眼见证",
@@ -87,7 +122,40 @@
     "subtitle": "AI 生成的精彩视频",
     "description": "探索我们社区使用 AI 视频生成创作的精彩作品。从电影级风景到产品动画，无所不能。",
     "ctaText": "准备好创作自己的杰作了吗？",
-    "ctaButton": "立即开始创作"
+    "ctaButton": "立即开始创作",
+    "alt": "{title} - {description}。展示 {tag} 能力的 AI 生成视频示例。",
+    "items": {
+      "nature": {
+        "title": "电影感自然风景",
+        "description": "震撼的风景视频",
+        "tag": "文本转视频"
+      },
+      "product": {
+        "title": "产品动画",
+        "description": "流畅的产品展示",
+        "tag": "图片转视频"
+      },
+      "abstract": {
+        "title": "抽象艺术",
+        "description": "富有创意的 AI 视觉效果",
+        "tag": "AI 创意"
+      },
+      "urban": {
+        "title": "城市场景",
+        "description": "运动中的城市生活",
+        "tag": "文本转视频"
+      },
+      "character": {
+        "title": "角色动画",
+        "description": "让角色鲜活起来",
+        "tag": "角色"
+      },
+      "space": {
+        "title": "太空旅程",
+        "description": "探索宇宙",
+        "tag": "文本转视频"
+      }
+    }
   },
   "Features": {
     "badge": "强大功能",
@@ -226,6 +294,13 @@
     "product": "产品",
     "company": "公司",
     "legal": "法律",
+    "description": "使用 AI 将您的想法转化为精彩视频。",
+    "madeWith": "由",
+    "madeBy": "VideoFly 团队制作",
+    "imageToVideo": "图片转视频",
+    "textToVideo": "文本转视频",
+    "referenceToVideo": "参考视频生成",
+    "pricing": "定价",
     "copyright": "© {year} VideoFly. 保留所有权利。",
     "privacy": "隐私政策",
     "terms": "服务条款",
@@ -305,6 +380,24 @@
     "mo": "/月",
     "annual_info": "/年",
     "monthly_info": "每月",
+    "description": "选择适合您的积分方案，灵活满足不同需求",
+    "onetime_tab": "一次性积分包",
+    "monthly_tab": "按月订阅",
+    "yearly_tab": "按年订阅",
+    "recommended": "推荐",
+    "free_user_allowed": "免费用户可买",
+    "subscription": "订阅",
+    "subscribers_only": "仅订阅用户",
+    "subscribers_only_tooltip": "此积分包仅限有效订阅用户购买。",
+    "processing": "处理中...",
+    "checkout_error": "结账错误",
+    "portal_error": "账单中心错误",
+    "checkout_failed": "创建结账会话失败。",
+    "portal_failed": "打开账单中心失败。",
+    "checkout_missing_url": "Creem 未返回结账链接。",
+    "portal_missing_url": "Creem 未返回账单中心链接。",
+    "subscriptionInfo": "当前方案：{plan}。续费日期：{date}。",
+    "noSubscription": "暂无有效订阅。",
     "go_to_dashboard": "前往控制台",
     "signup": "注册",
     "contact": "获取支持。",
@@ -346,6 +439,13 @@
     "singup_title": "还没有账户？立即注册。",
     "signin_email": "用电子邮件登录",
     "signin_others": "或者继续使用",
+    "continue_google": "使用 Google 继续",
+    "email_label": "邮箱",
+    "email_placeholder": "name@example.com",
+    "check_email": "请查收邮件",
+    "magic_link_sent": "登录链接已发送，请同时检查垃圾邮件。",
+    "request_failed_title": "出错了",
+    "request_failed_description": "登录请求失败，请重试。",
     "signup": "注册",
     "privacy": "只有您的电子邮件和头像会被存储。",
     "signup_github": "使用 Github 注册",
@@ -364,7 +464,15 @@
     "continue_email": "使用邮箱继续",
     "or_continue_with": "或使用以下方式继续",
     "email_placeholder": "name@example.com",
-    "terms_notice": "继续即表示您同意我们的服务条款和隐私政策。"
+    "email_label": "邮箱",
+    "invalid_email": "请输入有效的邮箱地址",
+    "terms_notice": "继续即表示您同意我们的服务条款和隐私政策。",
+    "login_failed": "登录失败",
+    "social_failed": "无法使用 {provider} 登录，请重试。",
+    "check_email": "请查收邮件",
+    "magic_link_sent": "登录链接已发送，请同时检查垃圾邮件。",
+    "request_failed_title": "出错了",
+    "request_failed_description": "登录请求失败，请重试。"
   },
   "MainNav": {
     "introducing": "介绍 VideoFly"
@@ -448,6 +556,8 @@
   "dashboard": {
     "myCreations": {
       "title": "我的创作",
+      "count": "{count, plural, one {# 个创作} other {# 个创作}}",
+      "loadingMore": "加载中...",
       "filter": {
         "allStatus": "全部状态",
         "all": "全部",
@@ -538,6 +648,10 @@
     "download": "下载",
     "copyLink": "复制链接",
     "removeFromHistory": "从历史中移除",
-    "generationFailed": "生成失败"
+    "generationFailed": "生成失败",
+    "promptCopied": "提示词已复制",
+    "untitled": "未命名",
+    "unknownError": "未知错误",
+    "copyPrompt": "复制提示词"
   }
 }

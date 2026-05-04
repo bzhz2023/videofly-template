@@ -11,10 +11,14 @@ import * as Icons from "@/components/ui/icons";
 import { UserAuthForm } from "@/components/user-auth-form";
 import type { Locale } from "@/config/i18n-config";
 
-export const metadata: Metadata = {
-  title: "Login",
-  description: "Login to your account",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Metadata");
+
+  return {
+    title: t("loginTitle"),
+    description: t("loginDescription"),
+  };
+}
 
 export default async function LoginPage({
   params,

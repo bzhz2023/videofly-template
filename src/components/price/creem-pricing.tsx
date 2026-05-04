@@ -137,16 +137,16 @@ export function CreemPricing({
       });
 
       if (error) {
-        toast.error("Checkout error", {
-          description: error.message ?? "Failed to create checkout session.",
+        toast.error(dictPrice.checkout_error, {
+          description: error.message ?? dictPrice.checkout_failed,
         });
         setLoadingProductId(null);
         return;
       }
 
       if (!data || !("url" in data) || !data.url) {
-        toast.error("Checkout error", {
-          description: "Missing checkout URL from Creem.",
+        toast.error(dictPrice.checkout_error, {
+          description: dictPrice.checkout_missing_url,
         });
         setLoadingProductId(null);
         return;
@@ -160,15 +160,15 @@ export function CreemPricing({
   const handlePortal = async () => {
     const { data, error } = await creem.createPortal();
     if (error) {
-      toast.error("Portal error", {
-        description: error.message ?? "Failed to open customer portal.",
+      toast.error(dictPrice.portal_error, {
+        description: error.message ?? dictPrice.portal_failed,
       });
       return;
     }
 
     if (!data || !("url" in data) || !data.url) {
-      toast.error("Portal error", {
-        description: "Missing portal URL from Creem.",
+      toast.error(dictPrice.portal_error, {
+        description: dictPrice.portal_missing_url,
       });
       return;
     }
@@ -187,17 +187,17 @@ export function CreemPricing({
           {dictPrice.slogan}
         </h2>
         <p className="mt-4 text-muted-foreground">
-          选择适合您的积分方案，灵活满足不同需求
+          {dictPrice.description}
         </p>
       </div>
 
       {/* Tab 切换 */}
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as PricingTab)} className="w-full">
         <TabsList className="mx-auto grid max-w-2xl grid-cols-3">
-          <TabsTrigger value="onetime">一次性积分包</TabsTrigger>
-          <TabsTrigger value="monthly">按月订阅</TabsTrigger>
+          <TabsTrigger value="onetime">{dictPrice.onetime_tab}</TabsTrigger>
+          <TabsTrigger value="monthly">{dictPrice.monthly_tab}</TabsTrigger>
           <TabsTrigger value="yearly" className="relative">
-            按年订阅
+            {dictPrice.yearly_tab}
             <Badge className="absolute -top-2 -right-2 h-5 px-2 bg-destructive text-xs">
               {calculateYearlyDiscount()}
             </Badge>
@@ -321,7 +321,7 @@ function PricingGrid({
   if (products.length === 0) {
     return (
       <div className="py-12 text-center text-muted-foreground">
-        暂无可用产品
+        {dictPrice.no_products}
       </div>
     );
   }
@@ -345,7 +345,7 @@ function PricingGrid({
             {/* 推荐标签 - 更醒目 */}
             {isRecommended && (
               <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 bg-linear-gradient-to-r from-primary to-primary/80 px-3 py-1 text-sm font-semibold shadow-md">
-                ⭐ 推荐
+                {dictPrice.recommended}
               </Badge>
             )}
 
@@ -355,7 +355,7 @@ function PricingGrid({
                 {/* 免费用户可买标签 */}
                 {isFreeUserAccessible && (
                   <Badge variant="secondary" className="text-xs">
-                    免费用户可买
+                    {dictPrice.free_user_allowed}
                   </Badge>
                 )}
               </div>
@@ -367,7 +367,7 @@ function PricingGrid({
                   </span>
                   {product.billingPeriod && (
                     <span className="text-muted-foreground text-sm">
-                      /{product.billingPeriod === "year" ? "年" : "月"}
+                      {product.billingPeriod === "year" ? dictPrice.per_year : dictPrice.per_month}
                     </span>
                   )}
                 </div>
@@ -409,7 +409,7 @@ function PricingGrid({
                     {isLoading ? (
                       <span className="flex items-center justify-center">
                         <Icons.Spinner className="mr-2 h-4 w-4 animate-spin" />
-                        处理中...
+                        {dictPrice.processing}
                       </span>
                     ) : product.billingPeriod ? (
                       dictPrice.upgrade

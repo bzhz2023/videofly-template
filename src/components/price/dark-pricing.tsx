@@ -121,15 +121,15 @@ export function DarkPricing({
       });
 
       if (error) {
-        toast.error("Checkout error", {
-          description: error.message ?? "Failed to create checkout session.",
+        toast.error(t("checkout_error"), {
+          description: error.message ?? t("checkout_failed"),
         });
         return;
       }
 
       if (!data || !("url" in data) || !data.url) {
-        toast.error("Checkout error", {
-          description: "Missing checkout URL from Creem.",
+        toast.error(t("checkout_error"), {
+          description: t("checkout_missing_url"),
         });
         return;
       }
@@ -141,15 +141,15 @@ export function DarkPricing({
   const handlePortal = async () => {
     const { data, error } = await creem.createPortal();
     if (error) {
-      toast.error("Portal error", {
-        description: error.message ?? "Failed to open customer portal.",
+      toast.error(t("portal_error"), {
+        description: error.message ?? t("portal_failed"),
       });
       return;
     }
 
     if (!data || !("url" in data) || !data.url) {
-      toast.error("Portal error", {
-        description: "Missing portal URL from Creem.",
+      toast.error(t("portal_error"), {
+        description: t("portal_missing_url"),
       });
       return;
     }
@@ -414,10 +414,10 @@ function PricingCard({
                       {isPending ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" />
-                          Processing...
+                          {t("processing")}
                         </>
                       ) : isRestricted ? (
-                        "Subscribers Only"
+                        t("subscribers_only")
                       ) : product.billingPeriod ? (
                         dictPrice.upgrade
                       ) : (
@@ -428,7 +428,7 @@ function PricingCard({
                 </TooltipTrigger>
                 {isRestricted && (
                   <TooltipContent>
-                    <p>This pack is only available to active subscribers.</p>
+                    <p>{t("subscribers_only_tooltip")}</p>
                   </TooltipContent>
                 )}
               </Tooltip>

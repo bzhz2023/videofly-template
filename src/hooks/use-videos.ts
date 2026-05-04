@@ -69,14 +69,14 @@ export function useVideos(filter?: VideoFilterOptions) {
       return { previousVideos };
     },
     onSuccess: () => {
-      toast.success(t("actions.deleteSuccess") || "Video deleted successfully");
+      toast.success(t("actions.deleteSuccess"));
     },
     onError: (error, variables, context) => {
       // 回滚
       if (context) {
         queryClient.setQueryData(["videos", filter], context.previousVideos);
       }
-      toast.error(t("actions.deleteError") || "Failed to delete video");
+      toast.error(t("actions.deleteError"));
     },
   });
 
@@ -86,11 +86,11 @@ export function useVideos(filter?: VideoFilterOptions) {
       return apiClient.retryVideo(uuid);
     },
     onSuccess: () => {
-      toast.success(t("actions.retrySuccess") || "Retry initiated");
+      toast.success(t("actions.retrySuccess"));
       refetch();
     },
     onError: () => {
-      toast.error(t("actions.retryError") || "Failed to retry");
+      toast.error(t("actions.retryError"));
     },
   });
 
@@ -154,9 +154,9 @@ export function useDownloadVideo() {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      toast.success(t("actions.downloadSuccess") || "Download started");
+      toast.success(t("actions.downloadSuccess"));
     } catch (error) {
-      toast.error(t("actions.downloadError") || "Failed to download video");
+      toast.error(t("actions.downloadError"));
     }
   }, [t]);
 

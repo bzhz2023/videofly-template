@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import type { Locale } from "@/config/i18n-config";
 import { buildAlternates } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -9,9 +10,10 @@ export async function generateMetadata({
 }) {
   const { locale } = await params;
   const alternates = buildAlternates("/privacy-policy", locale);
+  const t = await getTranslations("Metadata");
 
   return {
-    title: "Privacy Policy",
+    title: t("privacyTitle"),
     alternates: {
       canonical: alternates.canonical,
       languages: alternates.languages,
@@ -24,7 +26,7 @@ export default function PrivacyPolicyPage() {
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
+            <h1 className="text-3xl font-bold mb-8">{t("title")}</h1>
             <div className="prose dark:prose-invert">
                 <p>Last updated: {new Date().getFullYear()}</p>
 
